@@ -21,35 +21,38 @@ public class UploadedVideoConversionServiceImpl implements UploadedVideoConversi
 
 	@Autowired
 	private UploadedVideoDao dao;
-	
+
 	@Autowired
 	private CompressedVideoUtil compressedVideoUtil;
-	
+
 	@Autowired
 	private UploadedVideoService uploadedVideoService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(UploadedVideoConversionServiceImpl.class);
 
 	@Scheduled(fixedRate = 10000)
 	public void scheduleFixedRateTask() {
-	    findConversionInDatabase();
+		findConversionInDatabase();
 	}
-	
-	//This method will not work if video conversion starts before midnight and finishes after midnight the next day 
+
+	// This method will not work if video conversion starts before midnight and
+	// finishes after midnight the next day
 	public void findConversionInDatabase() {
 		List<UploadedVideo> unprocessedVideos = dao.findUnprocessedVideos();
 		for (UploadedVideo unprocessedVideo : unprocessedVideos) {
-			
+
 			logger.info("video processing started");
-			
+
 			VideoConversionCompleted videoConversionCompleted = new VideoConversionCompleted() {
 				@Override
 				public void videoConversionCompleted() {
 					logger.info("conversion is completed");
 					try {
-					unprocessedVideo.setThumbnail(uploadedVideoService.readFile("thumbnail", "png", unprocessedVideo.getUploadedDate(), unprocessedVideo.getId()));
-					unprocessedVideo.setContent(uploadedVideoService.readFile("compressed", "mp4", unprocessedVideo.getUploadedDate(), unprocessedVideo.getId()));
-					dao.saveChanges(unprocessedVideo);
+						unprocessedVideo.setThumbnail(uploadedVideoService.readFile("thumbnail", "png",
+								unprocessedVideo.getUploadedDate(), unprocessedVideo.getId()));
+						unprocessedVideo.setContent(uploadedVideoService.readFile("compressed", "mp4",
+								unprocessedVideo.getUploadedDate(), unprocessedVideo.getId()));
+						dao.saveChanges(unprocessedVideo);
 					} catch (IOException e) {
 						logger.info(e.toString());
 						logger.info("error while reading video");
@@ -60,16 +63,17 @@ public class UploadedVideoConversionServiceImpl implements UploadedVideoConversi
 			processVideo(unprocessedVideo, videoConversionCompleted);
 		}
 	}
-	
+
 	private void processVideo(UploadedVideo uploadedVideo, VideoConversionCompleted videoConversionCompleted) {
 		try {
-			compressedVideoUtil.convertVideoForStorage(uploadedVideo.getFilepath(), uploadedVideo.getId(), "mp4", videoConversionCompleted);
+			compressedVideoUtil.convertVideoForStorage(uploadedVideo.getFilepath(), uploadedVideo.getId(), "mp4",
+					videoConversionCompleted);
 		} catch (IOException e) {
 			logger.info(e.toString());
 			logger.info("error while compressing video");
 		}
 	}
-	
+
 	private void processThumbnail(UploadedVideo uploadedVideo) {
 		try {
 			compressedVideoUtil.generateThumbnail(uploadedVideo.getFilepath(), uploadedVideo.getId());

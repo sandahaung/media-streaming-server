@@ -1,6 +1,5 @@
 package com.lomatechnology.streaming.upload.dao;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,21 +12,25 @@ import java.util.Optional;
 @Repository
 public class UploadedVideoDao {
 	@Autowired
-    private UploadedVideoRepository repository;
+	private UploadedVideoRepository repository;
 
 	public List<UploadedVideo> findUnprocessedVideos() {
-        return repository.findUnprocessedVideos();
-    }
-	
-    public Optional<UploadedVideo> findById(String id) {
-        return repository.findById(id);
-    }
+		return repository.findUnprocessedVideos();
+	}
 
-    public UploadedVideo upload(UploadedVideo value) {
-        return repository.save(value);
-    }
-    
-    public UploadedVideo saveChanges(UploadedVideo value) {
-        return repository.save(value);
-    }
+	public Optional<UploadedVideo> findById(String id) {
+		return repository.findById(id);
+	}
+
+	public UploadedVideo upload(UploadedVideo value) {
+		return repository.save(value);
+	}
+
+	public UploadedVideo saveChanges(UploadedVideo value) {
+		return repository.save(value);
+	}
+
+	public Iterable<UploadedVideo> getAllVideos() {
+		return repository.findAll();
+	}
 }

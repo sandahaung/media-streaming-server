@@ -17,44 +17,39 @@ import java.util.UUID;
 
 @Service
 public class FileStorageUtil {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(FileStorageUtil.class);
 
-    public String getHomeDirectory() {
-        return System.getProperty("user.home");
-    }
+	public String getHomeDirectory() {
+		return System.getProperty("user.home");
+	}
 
-    public String createFile(MultipartFile file) throws IOException {
-        String dirPath = new StringBuilder(getHomeDirectory()).append(File.separator)
-                .append("Videos").append(File.separator)
-                .append("original").append(File.separator)
-                .append(LocalDate.now()).toString();
+	public String createFile(MultipartFile file) throws IOException {
+		String dirPath = new StringBuilder(getHomeDirectory()).append(File.separator).append("Videos")
+				.append(File.separator).append("original").append(File.separator).append(LocalDate.now()).toString();
 
-        String fileName = String.format(
-                "%s.%s",
-                UUID.randomUUID().toString(),
-                FilenameUtils.getExtension(file.getOriginalFilename())
-        );
+		String fileName = String.format("%s.%s", UUID.randomUUID().toString(),
+				FilenameUtils.getExtension(file.getOriginalFilename()));
 
-        File dir = new File(dirPath);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+		File dir = new File(dirPath);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
 
-        String location = new StringBuilder(dirPath).append(File.separator).append(fileName).toString();
-        Path path = Paths.get(location);
-        Files.write(path, file.getBytes());
-        return location;
-    }
+		String location = new StringBuilder(dirPath).append(File.separator).append(fileName).toString();
+		Path path = Paths.get(location);
+		Files.write(path, file.getBytes());
+		return location;
+	}
 
-    public byte[] getFile(String path) throws IOException {
-        File file = new File(path);
-        logger.info("reading file" + path);
-        byte[] b = null;
-        if (file.exists()) {
-            b = FileUtils.readFileToByteArray(file);
-        }
-        return b;
-    }
+	public byte[] getFile(String path) throws IOException {
+		File file = new File(path);
+		logger.info("reading file" + path);
+		byte[] b = null;
+		if (file.exists()) {
+			b = FileUtils.readFileToByteArray(file);
+		}
+		return b;
+	}
 
 }
