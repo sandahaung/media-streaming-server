@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +43,7 @@ public class StreamingController {
 	@Autowired
 	private UploadedVideoService service;
 
+	@CrossOrigin
 	@PostMapping(value = "/upload/video", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE,
 			MediaType.APPLICATION_OCTET_STREAM_VALUE })
 	public ResponseEntity<String> uploadVideo(@RequestParam("title") String title,
@@ -59,11 +61,13 @@ public class StreamingController {
 		return ok(metaData.toString());
 	}
 
+	@CrossOrigin
 	@GetMapping(value = "/list/all")
 	public ResponseEntity<String> listVideos() {
 		return ok(service.getAllVideos().toString());
 	}
 
+	@CrossOrigin
 	@GetMapping("/download/{id}/thumbnail")
 	public ResponseEntity<byte[]> getThumbnailById(@PathVariable("id") @NotNull @NotEmpty String id) {
 		Optional<UploadedVideo> mediaOptional = service.findById(id);
@@ -75,7 +79,8 @@ public class StreamingController {
 	    return new ResponseEntity<>(mediaOptional.get().getContent(), headers, HttpStatus.OK);
 	}
 	
-	@GetMapping("/download/{id}/video")
+	@CrossOrigin
+	@GetMapping("/play/video/{id}")
 	public ResponseEntity<byte[]> getvideoById(@PathVariable("id") @NotNull @NotEmpty String id) {
 		Optional<UploadedVideo> mediaOptional = service.findById(id);
 		if (!mediaOptional.isPresent()) {

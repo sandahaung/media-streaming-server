@@ -48,11 +48,11 @@ public class UploadedVideo {
 
 	@ToString.Exclude
 	@Lob
-	@Column(name = "content", columnDefinition = "BLOB")
+	@Column(name = "content", columnDefinition = "LONGBLOB")
 	private byte[] content;
 
 	@ToString.Exclude
 	@Lob
-	@Column(name = "thumbnail", columnDefinition = "BLOB")
+	@Column(name = "thumbnail", columnDefinition = "LONGBLOB")
 	private byte[] thumbnail;
 }
